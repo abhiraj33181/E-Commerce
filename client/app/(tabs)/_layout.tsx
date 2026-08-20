@@ -1,4 +1,3 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { Tabs } from 'expo-router'
 import { Feather, Ionicons } from '@expo/vector-icons'
@@ -16,8 +15,9 @@ export default function TabLayout() {
                     backgroundColor : '#fff',
                     borderTopWidth : 1,
                     borderTopColor : '#F0F0F0',
-                    height : 56,
-                    paddingTop : 8
+                    height : 64,
+                    paddingTop : 8,
+                    paddingBottom : 8
                 }
                 
             }}
