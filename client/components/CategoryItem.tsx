@@ -8,7 +8,7 @@ export default function CategoryItem({item, isSelected, onPress} : CategoryItemP
   return (
     <TouchableOpacity className='mr-4 items-center' onPress={onPress}>
       <View className={`w-14 h-14 rounded-full items-center justify-center ${isSelected ? "bg-primary" : "bg-surface"}`}>
-        <Ionicons name={item.icon as any} size={24} color={isSelected ? '#FFF' : COLORS.primary} />
+        <Ionicons name={item.icon as any} size={28} color={isSelected ? '#FFF' : COLORS.primary} />
       </View>
       <Text className={`text-xs font-medium ${isSelected ? 'text-primary' : 'text-secondary'}`}>{item.name}</Text>
     </TouchableOpacity>
