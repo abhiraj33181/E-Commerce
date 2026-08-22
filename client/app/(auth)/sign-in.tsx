@@ -1,6 +1,4 @@
 import { COLORS } from "@/constants";
-import { useSignIn } from "@clerk/clerk-expo";
-import type { EmailCodeFactor } from "@clerk/types";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import * as React from "react";
@@ -8,7 +6,6 @@ import { Pressable, TextInput, View, Text, ActivityIndicator, TouchableOpacity }
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
-    const { signIn, setActive, isLoaded } = useSignIn();
     const router = useRouter();
 
     const [emailAddress, setEmailAddress] = React.useState("");
@@ -19,34 +16,12 @@ export default function Page() {
 
     const onSignInPress = async () => {
 
-        if (!isLoaded) return;
         if (!emailAddress || !password) return;
 
         setLoading(true);
 
         try {
-
-            const signInAttempt = await signIn.create({
-                identifier: emailAddress,
-                password,
-            });
-
-            if (signInAttempt.status === "complete") {
-                await setActive({
-                    session: signInAttempt.createdSessionId,
-                });
-                router.replace("/");
-            } else if (signInAttempt.status === "needs_second_factor") {
-                const emailCodeFactor = signInAttempt.supportedSecondFactors?.find((factor): factor is EmailCodeFactor => factor.strategy === "email_code");
-
-                if (emailCodeFactor) {
-                    await signIn.prepareSecondFactor({
-                        strategy: "email_code",
-                        emailAddressId: emailCodeFactor.emailAddressId,
-                    });
-                    setShowEmailCode(true);
-                }
-            }
+            router.replace("/");
         } catch (err) {
             console.error(err);
         } finally {
@@ -55,21 +30,11 @@ export default function Page() {
     };
 
     const onVerifyPress = async () => {
-        if (!isLoaded || !code) return;
+        if (!code) return;
 
         setLoading(true);
         try {
-            const attempt = await signIn.attemptSecondFactor({
-                strategy: "email_code",
-                code,
-            });
-
-            if (attempt.status === "complete") {
-                await setActive({
-                    session: attempt.createdSessionId,
-                });
-                router.replace("/");
-            }
+            router.replace("/");
         } catch (err) {
             console.error(err);
         } finally {

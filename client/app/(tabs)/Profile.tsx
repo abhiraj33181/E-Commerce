@@ -13,7 +13,7 @@ export default function Profile() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    router.replace('/sign-in')
+    router.replace('/sign-up')
   }
 
   return (
@@ -32,7 +32,7 @@ export default function Profile() {
             <Text className='text-primary font-bold text-xl mb-2'>Guest User</Text>
 
             <Text className='text-secondary text-base mb-8 text-center w-3/4 px-4'>Log in to view your profile , orders and addresses.</Text>
-            <TouchableOpacity className='bg-primary w-3/5 py-3 rounded-full items-center shadow-lg' onPress={() => router.push('/sign-in')}>
+            <TouchableOpacity className='bg-primary w-3/5 py-3 rounded-full items-center shadow-lg' onPress={() => router.push('/sign-up')}>
               <Text className='text-white font-bold'>Login / Sign Up</Text>
             </TouchableOpacity>
           </View>
