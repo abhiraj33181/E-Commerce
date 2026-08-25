@@ -75,7 +75,7 @@ return (
     <SafeAreaView className="flex-1 bg-white justify-center" style={{ padding: 28 }}>
         {!pendingVerification ? (
             <>
-                <TouchableOpacity onPress={() => router.push("/")} className="absolute top-12 z-10">
+                <TouchableOpacity onPress={() => router.push("/")} className="absolute top-12 left-4 z-10">
                     <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
                 </TouchableOpacity>
 
@@ -124,7 +124,7 @@ return (
             </>
         ) : (
             <>
-                <TouchableOpacity onPress={() => router.back()} className="absolute top-12 z-10">
+                <TouchableOpacity onPress={() => router.back()} className="absolute top-12 z-10 left-4">
                     <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
                 </TouchableOpacity>
 
