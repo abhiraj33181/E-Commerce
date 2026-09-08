@@ -1,22 +1,7 @@
-import "dotenv/config";
-import express, { Request, Response } from 'express';
-import cors from "cors";
-import connectDB from "./src/config/db.js";
+import app from "./src/app.js";
 
-const app = express();
-
-// Connect to MongoDB
-await connectDB();
-
-// Middleware
-app.use(cors())
-app.use(express.json());
 
 const port = process.env.PORT || 3000;
-
-app.get('/', (req: Request, res: Response) => {
-    res.send('Server is Live!');
-});
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

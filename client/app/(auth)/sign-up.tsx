@@ -1,148 +1,123 @@
 import { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Toast from 'react-native-toast-message';
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter, Link } from "expo-router";
-import { COLORS } from "@/constants";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import { router } from "expo-router";
+import { api } from "../../api/axios";
 
-export default function SignUpScreen() {
-    const router = useRouter();
+export default function RegisterScreen() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [emailAddress, setEmailAddress] = useState("");
-    const [password, setPassword] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [code, setCode] = useState("");
-    const [pendingVerification, setPendingVerification] = useState(false);
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    const onSignUpPress = async () => {
-
-        if (!emailAddress || !password) {
-            Toast.show({
-                type: 'error',
-                text1: 'Missing Fields',
-                text2: 'Please fill in all fields'
-            });
-            return;
-        }
-
-        setLoading(true);
-        try {
-
-            Toast.show({
-                type: 'info',
-                text1: 'Not Implemented Yet'
-            })
-        } catch (err: any) {
-            Toast.show({
-                type: 'error',
-                text1: 'Failed to Sign Up',
-                text2: err?.errors?.[0]?.message ?? "Something went wrong"
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const onVerifyPress = async () => {
-
-        if (!code) {
-            Toast.show({
-                type: 'error',
-                text1: 'Missing Fields',
-                text2: 'Enter verification code'
-            });
-            return;
-        }
-
-        setLoading(true);
-        try {
-            router.replace("/");
-        } catch (err: any) {
-        Toast.show({
-            type: 'error',
-            text1: 'Failed to Verify',
-            text2: err?.errors?.[0]?.message ?? "Invalid code"
-        });
-    } finally {
-        setLoading(false);
+  const handleRegister = async () => {
+    if (!name || !email || !password) {
+      Alert.alert("Error", "Please fill all fields.");
+      return;
     }
-};
 
-return (
-    <SafeAreaView className="flex-1 bg-white justify-center" style={{ padding: 28 }}>
-        {!pendingVerification ? (
-            <>
-                <TouchableOpacity onPress={() => router.push("/")} className="absolute top-12 left-4 z-10">
-                    <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
-                </TouchableOpacity>
+    try {
+      setLoading(true);
 
-                {/* Header */}
-                <View className="items-center mb-8">
-                    <Text className="text-3xl font-bold text-primary mb-2">Create Account</Text>
-                    <Text className="text-secondary">Sign up to get started</Text>
-                </View>
+      await api.post("/auth/register", {
+        name,
+        email,
+        password,
+      });
 
-                {/* First Name */}
-                <View className="mb-4">
-                    <Text className="text-primary font-medium mb-2">First Name</Text>
-                    <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="John" placeholderTextColor="#999" value={firstName} onChangeText={setFirstName} />
-                </View>
+      Alert.alert("Success", "Account created successfully!");
 
-                {/* Last Name */}
-                <View className="mb-6">
-                    <Text className="text-primary font-medium mb-2">Last Name</Text>
-                    <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="Doe" placeholderTextColor="#999" value={lastName} onChangeText={setLastName} />
-                </View>
+      router.replace("/(auth)/sign-in");
+    } catch (error: any) {
+      Alert.alert(
+        "Register Failed",
+        error.response?.data?.message || "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                {/* Email */}
-                <View className="mb-4">
-                    <Text className="text-primary font-medium mb-2">Email</Text>
-                    <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="user@example.com" placeholderTextColor="#999" autoCapitalize="none" keyboardType="email-address" value={emailAddress} onChangeText={setEmailAddress} />
-                </View>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Create Account</Text>
 
-                {/* Password */}
-                <View className="mb-6">
-                    <Text className="text-primary font-medium mb-2">Password</Text>
-                    <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="********" placeholderTextColor="#999" secureTextEntry value={password} onChangeText={setPassword} />
-                </View>
+      <TextInput
+        placeholder="Name"
+        style={styles.input}
+        value={name}
+        onChangeText={setName}
+      />
 
-                {/* Submit */}
-                <TouchableOpacity className="w-full bg-primary py-4 rounded-full items-center mb-10" onPress={onSignUpPress} disabled={loading}>
-                    {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-bold text-lg">Continue</Text>}
-                </TouchableOpacity>
+      <TextInput
+        placeholder="Email"
+        style={styles.input}
+        value={email}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        onChangeText={setEmail}
+      />
 
-                {/* Footer */}
-                <View className="flex-row justify-center">
-                    <Text className="text-secondary">Already have an account? </Text>
-                    <Link href="/sign-in">
-                        <Text className="text-primary font-bold">Login</Text>
-                    </Link>
-                </View>
-            </>
-        ) : (
-            <>
-                <TouchableOpacity onPress={() => router.back()} className="absolute top-12 z-10 left-4">
-                    <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
-                </TouchableOpacity>
+      <TextInput
+        placeholder="Password"
+        style={styles.input}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
 
-                {/* Verification */}
-                <View className="items-center mb-8">
-                    <Text className="text-3xl font-bold text-primary mb-2">Verify Email</Text>
-                    <Text className="text-secondary text-center">Enter the code sent to your email</Text>
-                </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleRegister}
+        disabled={loading}
+      >
+        <Text style={styles.buttonText}>
+          {loading ? "Creating..." : "Sign Up"}
+        </Text>
+      </TouchableOpacity>
 
-                <View className="mb-6">
-                    <TextInput className="w-full bg-surface p-4 rounded-xl text-primary text-center tracking-widest" placeholder="123456" placeholderTextColor="#999" keyboardType="number-pad" value={code} onChangeText={setCode} />
-                </View>
-
-                <TouchableOpacity className="w-full bg-primary py-4 rounded-full items-center" onPress={onVerifyPress} disabled={loading}>
-                    {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-bold text-lg">Verify</Text>}
-                </TouchableOpacity>
-            </>
-        )}
-    </SafeAreaView>
-);
+      <TouchableOpacity onPress={() => router.push("/(auth)/sign-in")}>
+        <Text style={styles.link}>Already have an account? Login</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", padding: 24 },
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: 25,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+  },
+  button: {
+    backgroundColor: "#2563EB",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  link: {
+    textAlign: "center",
+    marginTop: 18,
+    color: "#2563EB",
+  },
+});

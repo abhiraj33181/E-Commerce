@@ -13,6 +13,7 @@ import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Toast from "react-native-toast-message";
+import { AuthProvider } from "@/context/authContext";
 
 export default function RootLayout() {
 
@@ -24,17 +25,20 @@ export default function RootLayout() {
     ManropeExtraBold: Manrope_800ExtraBold,
   });
 
+
   if (!loaded) return null;
 
   return (
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <CartProvider>
-          <WishlistProvider>
-            <Stack screenOptions={{ headerShown: false }} />
-            <Toast />
-          </WishlistProvider>
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Stack screenOptions={{ headerShown: false }} />
+              <Toast />
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
       </GestureHandlerRootView>
     </>
   );

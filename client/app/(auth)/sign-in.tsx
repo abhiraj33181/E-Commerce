@@ -1,103 +1,127 @@
-import { COLORS } from "@/constants";
-import { Ionicons } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
-import * as React from "react";
-import { Pressable, TextInput, View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import { router } from "expo-router";
+import { api } from "../..//api/axios";
+import { saveToken } from "../../utils/secureStore";
 
-export default function Page() {
-    const router = useRouter();
-
-    const [emailAddress, setEmailAddress] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [code, setCode] = React.useState("");
-    const [showEmailCode, setShowEmailCode] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-
-    const onSignInPress = async () => {
-
-        if (!emailAddress || !password) return;
-
-        setLoading(true);
-
-        try {
-            router.replace("/");
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const onVerifyPress = async () => {
-        if (!code) return;
-
-        setLoading(true);
-        try {
-            router.replace("/");
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <SafeAreaView className="flex-1 bg-white justify-center" style={{ padding: 28 }}>
-            {!showEmailCode ? (
-                <>
-                    <TouchableOpacity onPress={() => router.push("/")} className="absolute top-12 left-4 z-10">
-                        <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
-                    </TouchableOpacity>
-
-                    {/* Header */}
-                    <View className="items-center mb-8">
-                        <Text className="text-3xl font-bold text-primary mb-2">Welcome Back</Text>
-                        <Text className="text-secondary">Sign in to continue</Text>
-                    </View>
-
-                    {/* Email */}
-                    <View className="mb-4">
-                        <Text className="text-primary font-medium mb-2">Email</Text>
-                        <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="user@example.com" placeholderTextColor="#999" autoCapitalize="none" keyboardType="email-address" value={emailAddress} onChangeText={setEmailAddress} />
-                    </View>
-
-                    {/* Password */}
-                    <View className="mb-6">
-                        <Text className="text-primary font-medium mb-2">Password</Text>
-                        <TextInput className="w-full bg-surface p-4 rounded-xl text-primary" placeholder="********" placeholderTextColor="#999" secureTextEntry value={password} onChangeText={setPassword} />
-                    </View>
-
-                    {/* Submit */}
-                    <Pressable className={`w-full py-4 rounded-full items-center mb-10 ${loading || !emailAddress || !password ? "bg-gray-300" : "bg-primary"}`} onPress={onSignInPress} disabled={loading || !emailAddress || !password}>
-                        {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-bold text-lg">Sign In</Text>}
-                    </Pressable>
-
-                    {/* Footer */}
-                    <View className="flex-row justify-center">
-                        <Text className="text-secondary">Don&apos;t have an account? </Text>
-                        <Link href="/sign-up">
-                            <Text className="text-primary font-bold">Sign up</Text>
-                        </Link>
-                    </View>
-                </>
-            ) : (
-                <>
-                    {/* Verification */}
-                    <View className="items-center mb-8">
-                        <Text className="text-3xl font-bold text-primary mb-2">Verify Email</Text>
-                        <Text className="text-secondary text-center">Enter the code sent to your email</Text>
-                    </View>
-
-                    <View className="mb-6">
-                        <TextInput className="w-full bg-surface p-4 rounded-xl text-primary text-center tracking-widest" placeholder="123456" placeholderTextColor="#999" keyboardType="number-pad" value={code} onChangeText={setCode} />
-                    </View>
-
-                    <Pressable className="w-full bg-primary py-4 rounded-full items-center" onPress={onVerifyPress} disabled={loading}>
-                        {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-bold text-lg">Verify</Text>}
-                    </Pressable>
-                </>
-            )}
-        </SafeAreaView>
-    );
+interface LoginResponse {
+  message: string;
+  token: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  };
 }
+
+export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter email and password.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await api.post<LoginResponse>("/auth/login", {
+        email,
+        password,
+      });
+
+      await saveToken(res.data.token);
+
+      Alert.alert("Success", `Welcome ${res.data.user.name}`);
+
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      Alert.alert(
+        "Login Failed",
+        error.response?.data?.message || "Invalid credentials."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Welcome Back 👋</Text>
+
+      <TextInput
+        placeholder="Email"
+        style={styles.input}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        value={email}
+        onChangeText={setEmail}
+      />
+
+      <TextInput
+        placeholder="Password"
+        style={styles.input}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        <Text style={styles.buttonText}>
+          {loading ? "Signing In..." : "Sign In"}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("/(auth)/sign-up")}>
+        <Text style={styles.link}>Don't have an account? Register</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", padding: 24 },
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: 25,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+  },
+  button: {
+    backgroundColor: "#16A34A",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  link: {
+    textAlign: "center",
+    marginTop: 18,
+    color: "#2563EB",
+  },
+});
