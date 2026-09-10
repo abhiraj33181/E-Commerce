@@ -16,7 +16,7 @@ const cartItemSchema = new mongoose.Schema<ICartItem>({
     size : {
         type: String
     }
-}, {timestamps: true})
+})
 
 const cartSchema = new mongoose.Schema<ICart>({
     user : {
