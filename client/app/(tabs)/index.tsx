@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Header from '@/components/Header'
 import { BANNERS, dummyProducts } from '@/assets/assets'
@@ -8,6 +8,7 @@ import { CATEGORIES } from '@/constants'
 import CategoryItem from '@/components/CategoryItem'
 import { Product } from '@/constants/types'
 import ProductCard from '@/components/ProductCard'
+import PaginationDot from '@/components/PaginationDot'
 
 const { width } = Dimensions.get('window')
 
@@ -15,8 +16,11 @@ export default function Home() {
 
     const router = useRouter();
     const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+    const [isHovering, setIsHovering] = useState(false)
     const [products, setProduts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
+
+    const scrollRef = useRef<ScrollView>(null)
 
     const fetchProducts = () => {
         setProduts(dummyProducts);
@@ -26,6 +30,23 @@ export default function Home() {
     useEffect(() => {
         fetchProducts()
     }, [])
+
+    useEffect(() => {
+        if (isHovering) return;
+
+        const timer = setInterval(() => {
+            setActiveBannerIndex((prev) => (prev === BANNERS.length - 1 ? 0 : prev + 1));
+        }, 5000);
+
+        return () => clearInterval(timer)
+    }, [isHovering])
+
+    useEffect(() => {
+        scrollRef.current?.scrollTo({
+            x: activeBannerIndex * (width - 32),
+            animated: true,
+        });
+    }, [activeBannerIndex]);
 
     const categories = [{ id: 'all', name: 'All', icon: 'grid' }, ...CATEGORIES]
 
@@ -41,20 +62,19 @@ export default function Home() {
                 {/* Banner Slider */}
                 <View className='mb-6'>
 
-                    <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} className='w-full h-48 rounded-xl' scrollEventThrottle={16} onScroll={(e) => {
-                        const slide = Math.ceil(e.nativeEvent.contentOffset.x / e.nativeEvent.layoutMeasurement.width)
-
-                        if (slide !== activeBannerIndex) {
-                            setActiveBannerIndex(slide)
-                        }
+                    <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} className='w-full h-48 rounded-xl' scrollEventThrottle={16} ref={scrollRef} onMomentumScrollEnd={(event) => {
+                        const index = Math.round(
+                            event.nativeEvent.contentOffset.x / (width - 32)
+                        );
+                        setActiveBannerIndex(index);
                     }}>
-
                         {BANNERS.map((banner, index) => (
+
                             <View key={index} className='relative w-full h-48 bg-gray-200 overflow-hidden' style={{ width: width - 32 }}>
                                 <Image source={{ uri: banner.image }} className='w-full h-full' resizeMode='cover' />
 
                                 <View className='absolute inset-0 bg-black/40' />
-                                
+
                                 <View className='absolute bottom-4 left-4 z-10'>
                                     <Text className='text-white text-2xl font-bold'>{banner.title}</Text>
                                     <Text className='text-white text-sm font-medium'>{banner.subtitle}</Text>
@@ -64,18 +84,21 @@ export default function Home() {
                                     </TouchableOpacity>
                                 </View>
 
-                                
+
                             </View>
                         ))}
+
 
                     </ScrollView>
 
                     {/* Pagination Dots */}
-                    <View className='flex-row justify-center mt-3 gap-2'>
+                    <View className="flex-row justify-center mt-3 gap-2">
                         {BANNERS.map((_, index) => (
-                            <View key={index} className={`h-2 rounded-full ${index === activeBannerIndex ? 'w-6 bg-primary' : 'bg-gray-300 w-2'}`} />
+                            <PaginationDot
+                                key={index}
+                                active={index === activeBannerIndex}
+                            />
                         ))}
-
                     </View>
 
                 </View>
@@ -111,7 +134,7 @@ export default function Home() {
                         <ActivityIndicator size="large" />
                     ) : (
                         <View className='flex-row flex-wrap justify-between'>
-                            {products.slice(0,4).map((product) => (
+                            {products.slice(0, 4).map((product) => (
                                 <ProductCard key={product._id} product={product} />
                             ))}
                         </View>

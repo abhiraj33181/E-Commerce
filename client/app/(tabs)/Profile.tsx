@@ -6,14 +6,16 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Header from '@/components/Header'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS, PROFILE_MENU } from '@/constants'
+import { useAuth } from '@/context/authContext'
 
 export default function Profile() {
 
-  const { user } = { user: dummyUser }
+  const { user, signOut } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
-    router.replace('/sign-in')
+    await signOut();
+    router.replace('/(auth)/sign-in')
   }
 
   return (
@@ -32,7 +34,7 @@ export default function Profile() {
             <Text className='text-primary font-bold text-xl mb-2'>Guest User</Text>
 
             <Text className='text-secondary text-base mb-8 text-center w-3/4 px-4'>Log in to view your profile , orders and addresses.</Text>
-            <TouchableOpacity className='bg-primary w-3/5 py-3 rounded-full items-center shadow-lg' onPress={() => router.push('/sign-in')}>
+            <TouchableOpacity className='bg-primary w-3/5 py-3 rounded-full items-center shadow-lg' onPress={() => router.push('/sign-up')}>
               <Text className='text-white font-bold'>Login / Sign Up</Text>
             </TouchableOpacity>
           </View>
@@ -43,13 +45,13 @@ export default function Profile() {
             <View className='items-center mb-8'>
 
               <View className='mb-3'>
-                <Image source={{ uri: user.imageUrl }} className='size-20 border-2 border-white shadow-sm rounded-full' />
+                <Image source={{ uri: user.image || "https://imgcdn.stablediffusionweb.com/2024/9/8/83594a4d-cbaa-44ea-b13d-6ab9710e6824.jpg" }} className='size-20 border-2 border-white shadow-sm rounded-full' />
               </View>
-              <Text className='text-xl font-bold text-primary'>{user.firstName + " " + user.lastName}</Text>
-              <Text className='text-secondary text-sm'>{user.emailAddresses[0].emailAddress}</Text>
+              <Text className='text-xl font-bold text-primary'>{user.name}</Text>
+              <Text className='text-secondary text-sm'>{user.email}</Text>
 
               {/* Admin Panel Button if the user is the admin */}
-              {user.publicMetadata?.role === 'admin' && (
+              {user.role === 'admin' && (
                 <TouchableOpacity onPress={() => router.push('/admin')} className='mt-4 bg-primary px-6 py-2 rounded-full'>
                   <Text className='text-white font-bold'>Admin Panel</Text>
                 </TouchableOpacity>

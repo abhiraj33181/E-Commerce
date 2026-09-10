@@ -1,0 +1,33 @@
+import "dotenv/config";
+import express, { Request, Response } from 'express';
+import cors from "cors";
+import connectDB from "./config/db.js";
+import router from "./routes/authRoutes.js";
+import productRouter from "./routes/productsRoutes.js";
+import cartRouter from "./routes/cartRoutes.js";
+import OrderRouter from "./routes/ordersRoutes.js";
+import AddressRouter from "./routes/addressRoutes.js";
+import AdminRouter from "./routes/adminRoutes.js";
+
+const app = express();
+
+// Connect to MongoDB
+await connectDB();
+
+// Middleware
+app.use(cors())
+app.use(express.json());
+
+
+app.get('/', (req: Request, res: Response) => {
+    res.send('Server is Live!');
+});
+app.use('/api/auth', router)
+app.use('/api/products', productRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/orders', OrderRouter);
+app.use('/api/address', AddressRouter);
+app.use('/api/admin', AdminRouter);
+
+
+export default app;
