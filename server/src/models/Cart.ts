@@ -15,7 +15,12 @@ const cartItemSchema = new mongoose.Schema<ICartItem>({
     },
     size : {
         type: String
-    }
+    },
+    price: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
 })
 
 const cartSchema = new mongoose.Schema<ICart>({
@@ -32,11 +37,16 @@ const cartSchema = new mongoose.Schema<ICart>({
     }
 }, {timestamps: true})
 
-cartSchema.methods.calculateTotal = function(this : ICart) {
-    this.totalAmount = this.items.reduce((total : number, item : ICartItem) => 
-        {return total + item.price * item.quantity}, 0)
-        return this.totalAmount;
-}
+cartSchema.methods.calculateTotal = function (this: ICart) {
+  this.totalAmount = this.items.reduce(
+    (total: number, item: ICartItem) => {
+      return total + (item.price || 0) * item.quantity;
+    },
+    0
+  );
+
+  return this.totalAmount;
+};
 
 const Cart = mongoose.model<ICart>('Cart', cartSchema)
 

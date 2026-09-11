@@ -3,20 +3,20 @@ import { useEffect } from "react";
 import { View, ActivityIndicator, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants";
-import { dummyUser } from "@/assets/assets";
+import { useAuth } from "@/context/authContext";
 
 export default function AdminLayout() {
-    const { user } = { user: dummyUser }
-    const isLoaded = true;
+    const { user, loading } = useAuth();
+    console.log(user, loading)
     const router = useRouter();
 
     useEffect(() => {
-        if (isLoaded && (!user || user.publicMetadata?.role !== "admin")) {
+        if (!loading && (!user || user.role !== "admin")) {
             router.replace("/(tabs)");
         }
-    }, [isLoaded, user]);
+    }, [loading, user]);
 
-    if (!isLoaded) {
+    if (loading) {
         return (
             <View className="flex-1 justify-center items-center bg-surface">
                 <ActivityIndicator size="large" color={COLORS.primary} />
@@ -24,7 +24,7 @@ export default function AdminLayout() {
         );
     }
 
-    if (!user || user.publicMetadata?.role !== "admin") return null;
+    if (!user || user.role !== "admin") return null;
 
     return (
         <Tabs

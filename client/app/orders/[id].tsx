@@ -6,7 +6,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import { COLORS } from "@/constants";
 import type { Order, Product } from "@/constants/types";
-import { dummyOrders } from "@/assets/assets";
+import { getToken } from "@/utils/secureStore";
+import api from "@/constants/api";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 export default function OrderDetails() {
     const { id } = useLocalSearchParams();
@@ -14,8 +16,25 @@ export default function OrderDetails() {
     const [loading, setLoading] = useState(true);
 
     const fetchOrderDetails = async () => {
-        setOrder(dummyOrders.find((order) => order._id === id) as any);
-        setLoading(false);
+        try {
+            const {data} = await api.get(`/orders/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${await getToken()}`
+                }
+            });
+            if (data.data) {
+                setOrder(data.data);
+            }
+        } catch (error : any) {
+            console.log("Error fetching order details: ", error);
+            Toast.show({
+                type: 'error',
+                text1: "Error",
+                text2: error.response?.data?.message || 'Failed to fetch order details'
+            })
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {

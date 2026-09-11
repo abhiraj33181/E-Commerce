@@ -8,8 +8,8 @@ import {
   Alert,
 } from "react-native";
 import { router } from "expo-router";
-import { api } from "../..//api/axios";
 import { saveToken } from "../../utils/secureStore";
+import { useAuth } from "@/context/authContext";
 
 interface LoginResponse {
   message: string;
@@ -25,7 +25,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [loading, setLoading] = useState(false);
+  const {loading, signIn} = useAuth();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -34,25 +34,12 @@ export default function LoginScreen() {
     }
 
     try {
-      setLoading(true);
-
-      const res = await api.post<LoginResponse>("/auth/login", {
-        email,
-        password,
-      });
-
-      await saveToken(res.data.token);
-
-      Alert.alert("Success", `Welcome ${res.data.user.name}`);
-
-      router.replace("/(tabs)");
+      await signIn(email, password);
     } catch (error: any) {
       Alert.alert(
         "Login Failed",
         error.response?.data?.message || "Invalid credentials."
       );
-    } finally {
-      setLoading(false);
     }
   };
 

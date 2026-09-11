@@ -19,7 +19,7 @@ OrderRouter.post('/', auth, createOrder);
 OrderRouter.put('/:id/status', auth, updateOrderStatus);
 
 // Get all orders (Admin only)
-OrderRouter.get('/admin', auth, getAllOrders);
+OrderRouter.get('/admin/all', auth, getAllOrders);
 
 
 

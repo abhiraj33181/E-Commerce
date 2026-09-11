@@ -7,7 +7,7 @@ import { View } from 'react-native'
 
 export default function TabLayout() {
 
-    const { cartItems } = useCart();
+    const { itemCount } = useCart();
 
     return (
         <Tabs
@@ -43,7 +43,7 @@ export default function TabLayout() {
                             <Feather name={focused ? 'shopping-cart' : 'shopping-cart'} size={26} color={color} />
 
                             {
-                                cartItems.length > 0 && (
+                                itemCount > 0 && (
                                     <View className='absolute -top-2 -right-2 bg-accent size-3 rounded-full items-center justify-center'>
                                         <Ionicons name='ellipse' size={6} color="white" />
                                     </View>

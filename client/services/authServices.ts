@@ -1,6 +1,6 @@
 import { getToken } from "@/utils/secureStore";
-import { api } from "../api/axios";
 import { LoginData, RegisterData, LoginResponse } from "../types/auth";
+import api from "@/constants/api";
 
 export const registerUser = async (data: RegisterData) => {
   return api.post("/auth/register", data);

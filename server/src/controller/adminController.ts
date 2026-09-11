@@ -8,7 +8,7 @@ import Product from "../models/Product.js";
 export const getDashboardStats = async (req: Request, res: Response) => {
   try {
     const totalUsers = await User.countDocuments();
-    const totalProduct = await Product.countDocuments();
+    const totalProducts = await Product.countDocuments();
     const totalOrders = await Order.countDocuments();
 
     const validOrders = await Order.find({ orderStatus: { $ne: "cancelled" } });
@@ -27,7 +27,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       success: true,
       data: {
         totalUsers,
-        totalProduct,
+        totalProducts,
         totalOrders,
         totalRevenue,
         recentOrders,

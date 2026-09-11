@@ -8,40 +8,26 @@ import {
   Alert,
 } from "react-native";
 import { router } from "expo-router";
-import { api } from "../../api/axios";
-
+import { useAuth } from "@/context/authContext";
 export default function RegisterScreen() {
+  const {loading, signUp} = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
       Alert.alert("Error", "Please fill all fields.");
       return;
     }
-
     try {
-      setLoading(true);
-
-      await api.post("/auth/register", {
-        name,
-        email,
-        password,
-      });
-
-      Alert.alert("Success", "Account created successfully!");
-
-      router.replace("/(auth)/sign-in");
+      await signUp(name, email, password);
     } catch (error: any) {
       Alert.alert(
         "Register Failed",
         error.response?.data?.message || "Something went wrong."
       );
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -7,6 +7,9 @@ import Header from "@/components/Header";
 import { COLORS, getStatusColor } from "@/constants";
 import type { Order } from "@/constants/types";
 import { dummyOrders, formatDate } from "@/assets/assets";
+import { getToken } from "@/utils/secureStore";
+import api from "@/constants/api";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 export default function Orders() {
     const router = useRouter();
@@ -14,8 +17,25 @@ export default function Orders() {
     const [loading, setLoading] = useState(true);
 
     const fetchOrders = async () => {
-        setOrders(dummyOrders as any[]);
-        setLoading(false);
+        try {
+            const {data} = await api.get('/orders', {
+                headers: {
+                    Authorization: `Bearer ${await getToken()}`
+                }
+            });
+            if (data.data.length > 0) {
+                setOrders(data.data);
+            }
+        } catch (error : any) {
+            console.log("Error fetching orders: ", error);
+            Toast.show({
+                type: 'error',
+                text1: "Error",
+                text2: error.response?.data?.message || 'Failed to fetch orders'
+            })
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {

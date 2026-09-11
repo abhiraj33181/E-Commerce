@@ -27,6 +27,7 @@ export const getCart = async (req: Request, res: Response) => {
 export const addToCart = async (req: Request, res: Response) => {
   try {
     const { productId, quantity = 1, size } = req.body;
+    console.log("Add to Cart Request Body:", req.body);
 
     if (!productId) {
       return res
@@ -76,6 +77,7 @@ export const addToCart = async (req: Request, res: Response) => {
 
     res.status(200).json({ success: true, data: cart });
   } catch (error: any) {
+    console.error("Error adding item to cart:", error);
     res.status(500).json({
       success: false,
       message: error.message || "Error adding item to cart",
