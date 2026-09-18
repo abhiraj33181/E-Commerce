@@ -34,6 +34,13 @@ export default function TabLayout() {
                 }}
             />
 
+            <Tabs.Screen
+                name='Categories'
+                options={{
+                    tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'grid' : 'grid-outline'} size={26} color={color} />
+                }}
+            />
+
             {/* Cart */}
             <Tabs.Screen
                 name='Cart'

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { IUser } from "../../types/index.js";
 
+
 const userSchema = new mongoose.Schema<IUser>({
     name: {
         type: String,
@@ -22,7 +23,11 @@ const userSchema = new mongoose.Schema<IUser>({
     password: {
         type: String,
         required: true
-    }
+    },
+    wishlist: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product"
+    }],
 }, { timestamps: true })
 
 

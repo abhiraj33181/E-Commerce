@@ -148,7 +148,7 @@ export default function AdminProducts() {
                   {product.name}
                 </Text>
                 <Text className="text-secondary text-xs mb-1" numberOfLines={1}>
-                  Category : {product.category || "Others"}
+                  Category : {product.category || "Other"}
                 </Text>
                 <Text className="text-secondary text-xs mb-1" numberOfLines={1}>
                   Stock : {product.stock}

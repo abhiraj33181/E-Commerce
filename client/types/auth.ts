@@ -2,7 +2,9 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  role : string
+  role : string;
+  image?: string;
+  wishlist: string[];
 }
 
 export interface LoginResponse {

@@ -33,9 +33,22 @@ export const AuthProvider = ({ children }: any) => {
   const getProfile = async () => {
     try {
       setLoading(true);
+      const savedToken = await getToken();
+
+      if (!savedToken) {
+        setLoading(false);
+        return;
+      }
+      setToken(savedToken);
+
       const res = await getUserProfile();
       setUser(res.user);
     } catch (error) {
+      console.log("Profile Error:", error);
+
+      await deleteToken();
+      setToken(null);
+      setUser(null);
     } finally {
       setLoading(false);
     }

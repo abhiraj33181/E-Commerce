@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useCart } from '@/context/CartContext'
 import { useRouter } from 'expo-router';
 import { Address } from '@/constants/types';
-import { dummyAddress } from '@/assets/assets';
 import Toast from 'react-native-toast-message';
 import { COLORS } from '@/constants';
 import Header from '@/components/Header';

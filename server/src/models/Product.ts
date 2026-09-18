@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { PRODUCT_CATEGORIES } from '../../types/index.js';
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -16,7 +17,7 @@ const productSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ["Men", "Women", "Kids", "Shoes", "Bags", "Other"],
+        enum: PRODUCT_CATEGORIES,
         required: true
     },
     sizes : {

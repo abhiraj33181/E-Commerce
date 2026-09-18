@@ -1,5 +1,16 @@
 import { Document, Types } from "mongoose";
 
+export const PRODUCT_CATEGORIES = [
+    "Men",
+    "Women",
+    "Kids",
+    "Shoes",
+    "Bags",
+    "Other",
+] as const;
+
+export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
+
 export interface IAddress extends Document {
     user: Types.ObjectId;
     type: "Home" | "Work" | "Other";
@@ -68,7 +79,7 @@ export interface IProduct extends Document {
     comparePrice?: number;
     images: string[];
     sizes: string[];
-    category: "Men" | "Women" | "Kids" | "Shoes" | "Bags" | "Other";
+    category: ProductCategory;
     stock: number;
     ratings: {
         average: number;
@@ -88,6 +99,7 @@ export interface IUser extends Document {
     role: "user" | "admin";
     createdAt: Date;
     updatedAt: Date;
+    wishlist: Types.ObjectId[];
 }
 
 export interface IWishlist extends Document {

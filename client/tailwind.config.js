@@ -5,6 +5,13 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      fontFamily: {
+        "manrope": ["ManropeRegular"],
+        "manrope-medium": ["ManropeMedium"],
+        "manrope-semibold": ["ManropeSemiBold"],
+        "manrope-bold": ["ManropeBold"],
+        "manrope-extrabold": ["ManropeExtraBold"],
+      },
       colors : {
         primary : '#111111',
         secondary : '#666666',

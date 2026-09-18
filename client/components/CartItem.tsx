@@ -4,8 +4,10 @@ import { CartItemProps } from '@/constants/types'
 import { Image } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '@/constants'
+import { useCart } from '@/context/CartContext'
 
-export default function CartItem({ item, onRemove, onUpdateQuantity }: CartItemProps) {
+export default function CartItem({ item, onRemove }: CartItemProps) {
+    const {updateQuantity} = useCart();
 
     const imageUrl = item.product.images?.[0]
 
@@ -32,14 +34,14 @@ export default function CartItem({ item, onRemove, onUpdateQuantity }: CartItemP
                     <Text className='text-primary font-bold text-base'>${item.product.price.toFixed(2)}</Text>
 
                     <View className='flex-row items-center bg-surface rounded-full px-2 py-1'>
-                        <TouchableOpacity className='p-1' onPress={() => onUpdateQuantity && onUpdateQuantity(item.quantity - 1)}>
+                        <TouchableOpacity className='p-1' onPress={() => updateQuantity(item.id, item.quantity - 1, item.size)}>
                             <Ionicons name='remove' size={16} color={COLORS.primary} />
                         </TouchableOpacity>
 
                         <Text className='text-primary font-medium mx-3'>{item.quantity}</Text>
 
 
-                        <TouchableOpacity className='p-1' onPress={() => onUpdateQuantity && onUpdateQuantity(item.quantity + 1)}>
+                        <TouchableOpacity className='p-1' onPress={() => updateQuantity(item.id, item.quantity + 1, item.size)}>
                             <Ionicons name='add' size={16} color={COLORS.primary} />
                         </TouchableOpacity>
 

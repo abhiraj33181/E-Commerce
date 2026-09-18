@@ -31,7 +31,7 @@ export const auth = async (
 
       const payload = decoded as TokenPayload;
 
-      const user = await User.findById(payload.id).select("-password");
+      const user = await User.findById(payload.id).select("-password -wishlist");
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });

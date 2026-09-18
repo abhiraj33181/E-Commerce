@@ -6,18 +6,20 @@ import {
   Dimensions,
   TouchableOpacity,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import { BANNERS } from "@/assets/assets";
 import { useRouter } from "expo-router";
-import { CATEGORIES } from "@/constants";
+import { CATEGORIES, COLORS } from "@/constants";
 import CategoryItem from "@/components/CategoryItem";
 import { Product } from "@/constants/types";
 import ProductCard from "@/components/ProductCard";
 import PaginationDot from "@/components/PaginationDot";
 import api from "@/constants/api";
+import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -27,6 +29,7 @@ export default function Home() {
   const [isHovering, setIsHovering] = useState(false);
   const [products, setProduts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
   const scrollRef = useRef<ScrollView>(null);
 
@@ -66,9 +69,33 @@ export default function Home() {
 
   const categories = [{ id: "all", name: "All", icon: "grid" }, ...CATEGORIES];
 
+  const handleSearchSubmit = () => {
+    if (searchText.trim().length > 0) {
+      router.push({
+        pathname: "/shop",
+        params: { search: searchText.trim() },
+      });
+      setSearchText("");
+    }
+  };
+
   return (
-    <SafeAreaView className="flex-1" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <Header title="Forever" showMenu showCart showLogo />
+
+      {/* Premium Search Box */}
+      <View className="flex-row items-center bg-gray-50 rounded-xl border border-gray-200 mx-4 mt-2 mb-4 h-12 px-4 shadow-sm">
+        <Ionicons name="search" size={20} color={COLORS.secondary} />
+        <TextInput
+          className="flex-1 ml-2 text-primary h-full"
+          placeholder="Search products..."
+          returnKeyType="search"
+          placeholderTextColor={COLORS.secondary}
+          value={searchText}
+          onChangeText={setSearchText}
+          onSubmitEditing={handleSearchSubmit}
+        />
+      </View>
 
       <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
         {/* Banner Slider */}
@@ -171,7 +198,6 @@ export default function Home() {
         </View>
 
         {/* Newsletter CTA */}
-
         <View className="bg-gray-100 p-6 rounded-2xl mb-20 items-center">
           <Text className="text-2xl font-bold text-primary mb-2 text-center">
             Join the Revolution

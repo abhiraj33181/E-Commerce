@@ -94,13 +94,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
         await fetchCart();
       }
     } catch (error) {
-        console.error('Failed to add to cart:', error)
-        Toast.show({
-            type : 'error',
-            text1 : "Failed to add to cart"
-        })
+      console.error("Failed to add to cart:", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to add to cart",
+      });
     } finally {
-        setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -108,23 +108,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!user) return;
 
     try {
-        const {data} = await api.delete(`/cart/item/${productId}?size=${size}`, {
-            headers : {
-                Authorization: `Bearer ${await getToken()}`,
-            },
-        });
+      const { data } = await api.delete(
+        `/cart/item/${productId}?size=${size}`,
+        {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        },
+      );
 
-        if (data.success) {
-            await fetchCart();
-        }
+      if (data.success) {
+        await fetchCart();
+      }
     } catch (error) {
-        console.error('Failed to remove from cart:', error)
-        Toast.show({
-            type : 'error',
-            text1 : "Failed to remove from cart"
-        })
+      console.error("Failed to remove from cart:", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to remove from cart",
+      });
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -137,46 +140,57 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (quantity < 1) return;
 
     try {
-        const {data} = await api.put(`/cart/item/${productId}`, { quantity, size }, {
-            headers : {
-                Authorization: `Bearer ${await getToken()}`,
-            },
-        });
-        if (data.success) {
-            await fetchCart();
-        }
+      console.log(
+        "Updating quantity for productId:",
+        productId,
+        "to",
+        quantity,
+        "size:",
+        size,
+      );
+      const { data } = await api.put(
+        `/cart/item/${productId}`,
+        { quantity, size },
+        {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        },
+      );
+      if (data.success) {
+        await fetchCart();
+      }
     } catch (error) {
-        console.error('Failed to update quantity:', error)
-        Toast.show({
-            type : 'error',
-            text1 : "Failed to update quantity"
-        })
+      console.error("Failed to update quantity:", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to update quantity",
+      });
     }
-    
   };
 
   const clearCart = async () => {
     if (!user) return;
 
     try {
-        setIsLoading(true);
-        const {data} = await api.delete('/cart/clear', {
-            headers : {
-                Authorization: `Bearer ${await getToken()}`,
-            },
-        });
-        if (data.success) {
-            setCartItems([]);
-            setCartTotal(0);
-        }
+      setIsLoading(true);
+      const { data } = await api.delete("/cart/clear", {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      });
+      if (data.success) {
+        setCartItems([]);
+        setCartTotal(0);
+      }
     } catch (error) {
-        console.error('Failed to clear cart:', error);
-        Toast.show({
-            type : 'error',
-            text1 : "Failed to clear cart"
-        })
+      console.error("Failed to clear cart:", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to clear cart",
+      });
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 

@@ -146,7 +146,11 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     }
     if (orderStatus) order.orderStatus = orderStatus;
     if (paymentStatus) order.paymentStatus = paymentStatus;
-    if (orderStatus === "delivered") order.deliveredAt = new Date();
+
+    if (orderStatus === "delivered") {
+      order.paymentStatus = "paid";
+      order.deliveredAt = new Date();
+    }
 
     await order.save();
 
