@@ -14,7 +14,9 @@ import { seedProducts } from "./scripts/seedProducts.js";
 const app = express();
 
 // Connect to MongoDB
-await connectDB();
+connectDB().catch((err) => {
+  console.error("MongoDB Connection Error:", err);
+});
 
 // Middleware
 app.use(cors())
